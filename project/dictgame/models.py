@@ -2,27 +2,27 @@ from django.db import models
 
 
 class Player(models.Model):
-    name = models.CharField()
+    name = models.CharField(max_length=64)
     # password = models.PasswordField()  # Do we need a password?
-    alias = models.CharField()
+    alias = models.CharField(max_length=64)
 
     def __str__(self):
         return f"{self.alias} ({self.name})"
 
 
 class Event(models.Model):
-    key = models.SlugField()
-    name = models.CharField()
-    host = models.ForeignKey(Player)
+    key = models.SlugField(max_length=16)
+    name = models.CharField(max_length=250)
+    host = models.ForeignKey(Player, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.name} hosted by {self.host.alias}"
 
 
 class Question(models.Model):
-    event = models.ForeignKey(Event)
-    dasher = models.ForeignKey(Player)  # the person who proposed the question
-    word = models.CharField()
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    dasher = models.ForeignKey(Player, on_delete=models.CASCADE)  # the person who proposed the question
+    word = models.CharField(max_length=64)
     theme = models.CharField(max_length=1, choices=[
         ('W', 'Word'),
         ('O', 'Organisation'),
@@ -42,9 +42,9 @@ class Question(models.Model):
 
 
 class Definition(models.Model):
-    player = models.ForeignKey(Player)
-    question = models.ForeignKey(Question, related_name='definitions')
-    definition = models.Textfield()
+    player = models.ForeignKey(Player, on_delete=models.CASCADE)
+    question = models.ForeignKey(Question, related_name='definitions', on_delete=models.CASCADE)
+    definition = models.TextField()
 
     def votes_for(self):
         """
@@ -60,10 +60,10 @@ class Definition(models.Model):
 
 
 class Guess(models.Model):
-    player = models.ForeignKey(Player)
-    chosen = models.ForeignKey(PlayerDefinition, related_name='guesses')
+    player = models.ForeignKey(Player, on_delete=models.CASCADE)
+    chose = models.ForeignKey(Definition, related_name='guesses', on_delete=models.CASCADE)
     scored = models.BooleanField(default=False)
-    score = models.SmallPositiveIntegerField(default=0)
+    score = models.PositiveSmallIntegerField(default=0)
 
     def calc_score(self):
         """
