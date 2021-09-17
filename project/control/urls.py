@@ -1,4 +1,4 @@
-"""dictgame_project URL Configuration
+"""the Dictionary Game URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/3.2/topics/http/urls/
@@ -14,8 +14,19 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import include, path
+
+from rest_framework import routers
+
+from dictgame.views import PlayerViewSet, EventViewSet, QuestionViewSet
+
+
+api = routers.DefaultRouter()
+api.register(r'player', PlayerViewSet)
+api.register(r'event', EventViewSet)
+api.register(r'question', QuestionViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', include(api.urls)),
 ]
