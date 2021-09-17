@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from balderdash import models
+from dictgame import models
 
 
 class PlayerSerializer(serializers.ModelSerializer):
@@ -18,19 +18,19 @@ class EventSerializer(serializers.ModelSerializer):
         fields = ('name', 'host')
 
 
-class QuestionSerializer(serializers.ModelSerializer):
-    definitions = DefinitionSerializer(many=True, source=defini)
-
-    class Meta:
-        model = models.Question
-        fields = ('word', 'type')
-
 class DefinitionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Definition
         fields = ('definition',)
 
+
+class QuestionSerializer(serializers.ModelSerializer):
+    definitions = DefinitionSerializer(many=True, source='definitions')
+
+    class Meta:
+        model = models.Question
+        fields = ('word', 'type')
 
 class GuessSerializer(serializers.ModelSerializer):
 
