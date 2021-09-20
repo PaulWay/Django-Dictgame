@@ -1,4 +1,5 @@
-from django.shortcuts import render
+from django.http import HttpResponseRedirect
+from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.views import View
 
@@ -50,7 +51,7 @@ class EntryView(View):
         form = self.form_class(request.POST)
         if form.is_valid():
             return HttpResponseRedirect(reverse(
-                'event', kwargs={'key': form.validated_data['key']}
+                'event', kwargs={'key': form.cleaned_data['key']}
             ))
         return render(request, self.template_name, {
             'entry_form': form,
@@ -63,5 +64,6 @@ class EventView(View):
         event = get_object_or_404(Event, key=key)
         return render(request, self.template_name, {
             'event': event,
+            'questions': event.questions.filter(state=2)
         })
 
