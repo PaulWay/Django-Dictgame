@@ -1,0 +1,19 @@
+[
+    {
+        "model": "dictgame.player",
+        "pk": 1,
+        "fields": {
+            "name": "Paul Wayper",
+            "alias": "Paul the Foon"
+        }
+    }, {
+
+        "model": "dictgame.event",
+        "pk": 1,
+        "fields": {
+            "key": "boogie_wonderland",
+            "name": "Paul's example dictionary game",
+            "host_id": 1
+        }
+    }
+]
