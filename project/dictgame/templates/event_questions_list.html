@@ -1,0 +1,5 @@
+<div id="questions">
+    <ul>{% for question in questions %}
+    <li>{{ question.word }} ({{ question.get_theme_display }})</li>
+    {% endfor %}</ul>
+</div>
