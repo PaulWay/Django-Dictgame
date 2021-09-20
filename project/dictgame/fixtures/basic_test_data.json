@@ -11,9 +11,50 @@
         "model": "dictgame.event",
         "pk": 1,
         "fields": {
-            "key": "boogie_wonderland",
+            "key": "examplicon",
             "name": "Paul's example dictionary game",
             "host_id": 1
+        }
+    }, {
+
+        "model": "dictgame.question",
+        "pk": 1,
+        "fields": {
+            "event": 1,
+            "dasher": 1,
+            "word": "antrilogue",
+            "theme": "W",
+            "state": 1
+        }
+    }, {
+        "model": "dictgame.question",
+        "pk": 2,
+        "fields": {
+            "event": 1,
+            "dasher": 1,
+            "word": "Bertrand Tuttelfang",
+            "theme": "P",
+            "state": 2
+        }
+    }, {
+        "model": "dictgame.question",
+        "pk": 3,
+        "fields": {
+            "event": 1,
+            "dasher": 1,
+            "word": "Sinister Nugent",
+            "theme": "M",
+            "state": 3
+        }
+    }, {
+        "model": "dictgame.question",
+        "pk": 4,
+        "fields": {
+            "event": 1,
+            "dasher": 1,
+            "word": "1st October, 1816",
+            "theme": "D",
+            "state": 4
         }
     }
 ]
