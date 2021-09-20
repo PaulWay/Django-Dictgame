@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.urls import reverse
 from django.views import View
 
 from rest_framework.viewsets import ModelViewSet
@@ -41,7 +42,7 @@ class EntryView(View):
 
     def get(self, request):
         form = self.form_class()
-        return render(self.template_name, {
+        return render(request, self.template_name, {
             'entry_form': form,
         })
 
@@ -51,7 +52,7 @@ class EntryView(View):
             return HttpResponseRedirect(reverse(
                 'event', kwargs={'key': form.validated_data['key']}
             ))
-        return render(self.template_name, {
+        return render(request, self.template_name, {
             'entry_form': form,
         })
 
@@ -60,7 +61,7 @@ class EventView(View):
     template_name = 'event.html'
     def get(self, request, key):
         event = get_object_or_404(Event, key=key)
-        return render(self.template_name, {
+        return render(request, self.template_name, {
             'event': event,
         })
 

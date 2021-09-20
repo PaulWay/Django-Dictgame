@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Welcome!{% endblock %}
+{% block body %}
+<h1>Welcome to the Dictionary Game!</h1>
+<h2>Enter your entry key here:</h2>
+<form action="{% url 'entry' %}" method="post">
+{% csrf_token %}
+{{ entry_form.as_table }}
+<input type="submit" value="Let's Go!" />
+</form>
+{% endblock %}
