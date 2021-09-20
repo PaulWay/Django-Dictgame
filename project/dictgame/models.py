@@ -20,8 +20,8 @@ class Event(models.Model):
 
 
 class Question(models.Model):
-    event = models.ForeignKey(Event, on_delete=models.CASCADE)
-    dasher = models.ForeignKey(Player, on_delete=models.CASCADE)  # the person who proposed the question
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='questions')
+    dasher = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='proposed_questions')  # the person who proposed the question
     word = models.CharField(max_length=64)
     theme = models.CharField(max_length=1, choices=[
         ('W', 'Word'),
@@ -42,7 +42,7 @@ class Question(models.Model):
 
 
 class Definition(models.Model):
-    player = models.ForeignKey(Player, on_delete=models.CASCADE)
+    player = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='proposed_definitions')
     question = models.ForeignKey(Question, related_name='definitions', on_delete=models.CASCADE)
     definition = models.TextField()
 

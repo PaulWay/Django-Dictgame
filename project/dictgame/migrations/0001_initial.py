@@ -42,8 +42,8 @@ class Migration(migrations.Migration):
                 ('word', models.CharField(max_length=64)),
                 ('theme', models.CharField(choices=[('W', 'Word'), ('O', 'Organisation'), ('M', 'Movie plot'), ('P', 'Person'), ('D', 'Date')], max_length=1)),
                 ('state', models.CharField(choices=[('1', 'Ready to be shown'), ('2', 'Word being shown, ready for definitions'), ('3', 'Definitions being voted on, ready for scoring'), ('4', 'Scoring done')], max_length=1)),
-                ('dasher', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='dictgame.player')),
-                ('event', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='dictgame.event')),
+                ('dasher', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='proposed_questions', to='dictgame.player')),
+                ('event', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='questions', to='dictgame.event')),
             ],
         ),
         migrations.CreateModel(
@@ -53,7 +53,7 @@ class Migration(migrations.Migration):
                 ('scored', models.BooleanField(default=False)),
                 ('score', models.PositiveSmallIntegerField(default=0)),
                 ('chose', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='guesses', to='dictgame.definition')),
-                ('player', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='dictgame.player')),
+                ('player', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='proposed_definitions', to='dictgame.player')),
             ],
         ),
         migrations.AddField(
