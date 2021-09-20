@@ -18,15 +18,19 @@ from django.urls import include, path
 
 from rest_framework import routers
 
-from dictgame.views import PlayerViewSet, EventViewSet, QuestionViewSet
+from dictgame import views
 
 
 api = routers.DefaultRouter()
-api.register(r'player', PlayerViewSet)
-api.register(r'event', EventViewSet)
-api.register(r'question', QuestionViewSet)
+api.register(r'player', views.PlayerViewSet)
+api.register(r'event', views.EventViewSet)
+api.register(r'question', views.QuestionViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include(api.urls)),
+    path('api/', include(api.urls)),
+
+    path(r'event/<str:key>', views.EventView.as_view(), name='event'),
+    # And last, the entry?
+    path('', views.EntryView.as_view()),
 ]
