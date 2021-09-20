@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <link rel="STYLESHEET" type="text/css" href="/static/game.css">
 <script type="text/javascript" language="JavaScript" src="/static/dictgame.js"></script>
-<script src="https://unpkg.com/htmx.org@1.1.0"></script>
+<script src="/static/htmx_1.5.0.js"></script>
 <script>
   document.body.addEventListener('htmx:configRequest', (event) => {
     event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
