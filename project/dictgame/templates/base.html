@@ -1,17 +1,17 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+{% load static %}<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head>
 <title>The Dictionary Game - {% block title %}{% endblock %}</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<link rel="STYLESHEET" type="text/css" href="/static/game.css">
-<script type="text/javascript" language="JavaScript" src="/static/dictgame.js"></script>
-<script src="/static/htmx_1.5.0.js"></script>
+<link rel="STYLESHEET" type="text/css" href="{% static 'game.css' %}">
+<script type="text/javascript" language="JavaScript" src="{% static 'dictgame.js' %}"></script>
+<script type="text/javascript" language="JavaScript" src="{% static 'htmx_1.5.0.js' %}"></script>
+</head>
+<body>
+{% block body %}{% endblock %}
 <script>
   document.body.addEventListener('htmx:configRequest', (event) => {
     event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
   })
 </script>
-</head>
-<body>
-{% block body %}{% endblock %}
 </body>
 </html>
