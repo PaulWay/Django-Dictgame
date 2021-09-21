@@ -1,7 +1,10 @@
+from django.db.models import Count, F
 from django.test import TestCase
 from django.urls import reverse
 
 # Create your tests here.
+
+from dictgame.models import Question
 
 
 class constants():
@@ -11,7 +14,7 @@ class constants():
     event_key = 'examplicon'
 
 
-class EntryTestCase(TestCase):
+class EntryViewTestCase(TestCase):
     fixtures = ['basic_test_data',]
 
     def test_basic_entry_page(self):
@@ -42,7 +45,7 @@ class EntryTestCase(TestCase):
         self.assertEqual(response.url, reverse('event', kwargs={'key': constants.event_key}))
 
 
-class EventTestCase(TestCase):
+class EventViewTestCase(TestCase):
     fixtures = ['basic_test_data', ]
 
     def test_no_list(self):
@@ -58,3 +61,38 @@ class EventTestCase(TestCase):
         content = response.content.decode()
         self.assertIn('<html>', content)
         self.assertIn("You're playing the 'Paul&#x27;s example dictionary game' Dictionary Game!", content)
+
+
+class QuestionModelTestCase(TestCase):
+    fixtures = ['basic_test_data',]
+
+    def test_questions_have_definitions(self):
+        # All questions must have at least one definition
+        questions_with_no_definitions = Question.objects.filter(
+            definitions__isnull=True
+        )
+        self.assertEqual(
+            questions_with_no_definitions.count(), 0,
+            "Questions with no definition" +
+            f"{questions_with_no_definitions}"
+        )
+        # Questions in state 1 - ready for definitions - should only have one
+        # definition - the one that was set by their own dasher.
+        ready_questions_with_many_definitions = Question.objects.annotate(
+            def_count=Count('definitions')
+        ).filter(state=1, def_count__gt=1)
+        self.assertEqual(
+            ready_questions_with_many_definitions.count(), 0,
+            "Questions in state 1 with more than one definition" +
+            f"{ready_questions_with_many_definitions}"
+        )
+        questions_with_definition_from_other_dasher = Question.objects.filter(
+            state=1
+        ).exclude(
+            definitions__player=F('dasher')
+        )
+        self.assertEqual(
+            questions_with_definition_from_other_dasher.count(), 0,
+            "Questions in state 1 whose dasher is not the definer: " +
+            f"{questions_with_definition_from_other_dasher}"
+        )
