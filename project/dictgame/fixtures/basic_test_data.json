@@ -56,5 +56,38 @@
             "theme": "D",
             "state": 4
         }
+    }, {
+
+        "model": "dictgame.definition",
+        "pk": 1,
+        "fields": {
+            "player": 1,
+            "question": 1,
+            "definition": "(noun) the dedication section of a book"
+        }
+    }, {
+        "model": "dictgame.definition",
+        "pk": 2,
+        "fields": {
+            "player": 1,
+            "question": 2,
+            "definition": "1773 - 1852: Celebrated Austrian poet and inventor of the game of Flones"
+        }
+    }, {
+        "model": "dictgame.definition",
+        "pk": 3,
+        "fields": {
+            "player": 1,
+            "question": 3,
+            "definition": "(1922) - British bed-sitter comedy about a lodger that tries unsuccessfully to steal his landlord's soap"
+        }
+    }, {
+        "model": "dictgame.definition",
+        "pk": 4,
+        "fields": {
+            "player": 1,
+            "question": 4,
+            "definition": "First lighting of London streets with gas lights"
+        }
     }
 ]
