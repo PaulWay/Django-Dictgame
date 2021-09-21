@@ -20,16 +20,17 @@ class Event(models.Model):
 
 
 class Question(models.Model):
-    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='questions')
-    dasher = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='proposed_questions')  # the person who proposed the question
-    word = models.CharField(max_length=64)
-    theme = models.CharField(max_length=1, choices=[
+    THEME_CHOICES = [
         ('W', 'Word'),
         ('O', 'Organisation'),
         ('M', 'Movie plot'),
         ('P', 'Person'),
         ('D', 'Date')
-    ])
+    ]
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='questions')
+    dasher = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='proposed_questions')  # the person who proposed the question
+    word = models.CharField(max_length=64)
+    theme = models.CharField(max_length=1, choices=THEME_CHOICES)
     state = models.CharField(max_length=1, choices=[
         ('1', 'Ready to be shown'),
         ('2', 'Word being shown, ready for definitions'),

@@ -26,3 +26,10 @@ class PlayerForm(forms.ModelForm):
     class Meta:
         model = Player
         fields = ('name', 'alias')
+
+
+class WordAndDefinitionForm(forms.Form):
+    # Split across two models, Question and Definition
+    word = forms.CharField()
+    theme = forms.ChoiceField(choices=Question.THEME_CHOICES)
+    definition = forms.CharField()
