@@ -7,6 +7,13 @@
             "alias": "Paul the Foon"
         }
     }, {
+        "model": "dictgame.player",
+        "pk": 2,
+        "fields": {
+            "name": "Bert Turlington",
+            "alias": "Mr Bert"
+        }
+    }, {
 
         "model": "dictgame.event",
         "pk": 1,
@@ -84,6 +91,22 @@
     }, {
         "model": "dictgame.definition",
         "pk": 4,
+        "fields": {
+            "player": 2,
+            "question": 3,
+            "definition": "Early Australian silent comedy about a man-about-town and his inept butler"
+        }
+    }, {
+        "model": "dictgame.definition",
+        "pk": 5,
+        "fields": {
+            "player": 1,
+            "question": 4,
+            "definition": "First lighting of London streets with gas lights"
+        }
+    }, {
+        "model": "dictgame.definition",
+        "pk": 6,
         "fields": {
             "player": 1,
             "question": 4,
