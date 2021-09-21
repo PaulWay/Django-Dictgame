@@ -1,0 +1,28 @@
+<div id="player_submit_question">
+{% if player_submit_question %}
+<h2>You can also submit a question for others to answer:</h2>
+<p>Choose an obscure or made-up topic, such as:</p>
+<ul>
+    <li>A word</li>
+    <li>The acronym or title of an organisation</li>
+    <li>A movie</li>
+    <li>The name of a person</li>
+    <li>A date (e.g. an anniversary of a special event)</li>
+</ul>
+<p>You supply the word, and the 'correct' definition.  Then, other people
+will make up their own definitions, and then everyone except you votes on
+which of these definitions is the one you supplied.</p>
+<table><form action="{% url 'event' key=event.key %}" method="post">
+{% csrf_token %}
+{{ word_and_definition_form.as_table }}
+<tr><td colspan="2" align="center">
+    <input name="word_form" type="submit" value="Here's something!" />
+</td></tr>
+</form></table>
+{% else %}
+<p>List of player's questions:</p>
+<ol>{% for question in my_questions %}
+    <li>{{ question.id }}: {{ question.word }} ({{ question.get_theme_display }}, {{ question.get_state_display }})</li>
+{% endfor %}</ol>
+{% endif %}{# player can submit question #}
+</div>

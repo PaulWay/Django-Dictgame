@@ -2,7 +2,5 @@
 {% block title %}Event {{ event.name }}{% endblock %}
 {% block body %}
 <h1>You're playing the '{{ event.name }}' Dictionary Game!</h1>
-<div id="questions">
-{% include "event_questions_list.html" %}
-</div>
+<div id="event_body">{%include "event_body.html" %}</div>
 {% endblock %}

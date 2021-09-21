@@ -1,0 +1,8 @@
+{% if player_form %}
+{% include "event_need_player_form.html" %}
+{% else %}{# player is logged in #}
+{% include "event_questions_list.html" %}
+{% include "event_player_submit_word.html" %}
+<form action="{% url 'event' key=event.key %}" method="post">{% csrf_token %}
+<input name="leave_game" type="submit" value="Leave the game" /></form>
+{% endif %}{# player check #}

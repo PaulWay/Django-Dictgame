@@ -1,0 +1,6 @@
+<h2>Choose a name and alias to join the event</h2>
+<table><form hx-post="{% url 'event' key=event.key %}" hx-target="#event_body">
+{% csrf_token %}
+{{ player_form.as_table }}
+<tr><td colspan="2" align="center"><input type="submit" value="Join me up!" /></td></tr>
+</form></table>
