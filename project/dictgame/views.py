@@ -5,7 +5,7 @@ from django.views import View
 
 from rest_framework.viewsets import ModelViewSet
 
-from dictgame.forms import EventForm
+from dictgame.forms import EventForm, PlayerForm, WordAndDefinitionForm
 from dictgame.models import Player, Event, Question
 from dictgame.serializers import (
     PlayerSerializer, EventSerializer, QuestionSerializer
@@ -58,12 +58,151 @@ class EntryView(View):
         })
 
 
+def get_player(request, event, template):
+    """
+    Get the player object based on session variables.  If that fails, hand
+    back a rendered template for the form.
+    """
+    # Find the player by their name and alias
+    player_name = request.session.get('player_name', None)
+    player_alias = request.session.get('player_alias', None)
+    if not (player_name and player_alias):
+        # Use standard page but try to be adaptive for HTMX integration?
+        return render(request, template, {
+            'event': event,
+            'player_form': PlayerForm(),
+        })
+    # Don't return a 404 here, just show the form again
+    try:
+        player = Player.objects.get(name=player_name, alias=player_alias)
+    except Player.DoesNotExist:
+        # Use standard page but try to be adaptive for HTMX integration?
+        return render(request, template, {
+            'event': event,
+            'player_form': PlayerForm(),
+        })
+    return player
+
+
 class EventView(View):
     template_name = 'event.html'
     def get(self, request, key):
         event = get_object_or_404(Event, key=key)
+        player = get_player(request, event, self.template_name)
+        if not isinstance(player, Player):
+            return player  # it's the render of the form
         return render(request, self.template_name, {
             'event': event,
-            'questions': event.questions.filter(state=2)
+            'player': player,
+            'questions': event.questions.filter(state=2),
+            'my_questions': event.questions.filter(dasher=player),
+            'player_submit_question': not event.questions.filter(dasher=player).exists(),
+            'word_and_definition_form': WordAndDefinitionForm(),
         })
 
+    # Handles player naming only, all other actions handled via HTMX forms
+    def post(self, request, key):
+        event = get_object_or_404(Event, key=key)
+        if 'leave_game' in request.POST:
+            if 'player_name' in request.session and 'player_alias' in request.session:
+                del(request.session['player_name'])
+                del(request.session['player_alias'])
+            return HttpResponseRedirect(reverse('entry'))
+        # Name form
+        if 'name' in request.POST:
+            player_form = PlayerForm(request.POST)
+            if not player_form.is_valid():
+                return render(request, self.template_name, {
+                    'event': event,
+                    'player_form': player_form,
+                })
+            # Save the player's info in their session
+            request.session['player_name'] = player_form.cleaned_data['name']
+            request.session['player_alias'] = player_form.cleaned_data['alias']
+            # Find a record for them, or create it.
+            player, created = Player.objects.update_or_create(
+                name=player_form.cleaned_data['name'],
+                alias=player_form.cleaned_data['alias'],
+            )
+        else:
+            player = get_player(request, event, 'event_body.html')
+            if not isinstance(player, Player):
+                return player  # it's the render of the form
+
+        return render(request, 'event_body.html', {
+            'event': event,
+            'player': player,
+            'questions': event.questions.filter(state=2),
+            'my_questions': event.questions.filter(dasher=player),
+            'player_submit_question': not event.questions.filter(dasher=player).exists(),
+            'word_and_definition_form': WordAndDefinitionForm(),
+        })
+
+
+class EventFormsView(View):
+    """
+    Handle HTMX event page form interactions
+    """
+
+    def post(self, request, key):
+        event = get_object_or_404(Event, key=key)
+        # Name form
+        if 'name' in request.POST:
+            player_form = PlayerForm(request.POST)
+            if not player_form.is_valid():
+                return render(request, self.template_name, {
+                    'event': event,
+                    'player_form': player_form,
+                })
+            # Save the player's info in their session
+            request.session['player_name'] = player_form.cleaned_data['name']
+            request.session['player_alias'] = player_form.cleaned_data['alias']
+            # Find a record for them, or create it.
+            player, created = Player.objects.update_or_create(
+                name=player_form.cleaned_data['name'],
+                alias=player_form.cleaned_data['alias'],
+            )
+            return render(request, 'event_need_player_form.html', {
+                'event': event,
+                'player_form': player_form,
+            })
+
+        # Otherwise, we assume we have the player set in the session
+        player = get_player(request, event, 'event.html')
+        if not isinstance(player, Player):
+            return player  # it's the render of the form
+
+        if 'word_form' in request.POST:
+            wnd_form = WordAndDefinitionForm(request.POST)
+            if wnd_form.is_valid():
+                # Create new question:
+                q = Question(
+                    event=event, dasher=player,
+                    word=wnd_form.cleaned_data['word'],
+                    theme=wnd_form.cleaned_data['theme'],
+                    state=1
+                )
+                q.save()
+                # Create the new definition:
+                a = Definition(
+                    player=player, question=q,
+                    definition=wnd_form.cleaned_data['definition']
+                )
+            return render(request, 'event_player_submit_word.html', {
+                'event': event, 'player': player,
+                'questions': event.questions.filter(state=2),
+                'my_questions': event.questions.filter(dasher=player),
+                'player_submit_question': not event.questions.filter(dasher=player).exists(),
+                'word_and_definition_form': WordAndDefinitionForm(),
+            })
+
+        else:
+            print(f"{request.POST=}")
+        return render(request, self.template_name, {
+            'event': event,
+            'player': player,
+            'questions': event.questions.filter(state=2),
+            'my_questions': event.questions.filter(dasher=player),
+            'player_submit_question': not event.questions.filter(dasher=player).exists(),
+            'word_and_definition_form': WordAndDefinitionForm(),
+        })
