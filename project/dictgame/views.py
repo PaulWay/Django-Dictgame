@@ -77,10 +77,7 @@ def get_player(request, event, template):
         player = Player.objects.get(name=player_name, alias=player_alias)
     except Player.DoesNotExist:
         # Use standard page but try to be adaptive for HTMX integration?
-        return render(request, template, {
-            'event': event,
-            'player_form': PlayerForm(),
-        })
+        player = None
     return player
 
 
@@ -94,13 +91,14 @@ class EventView(View):
         return render(request, self.template_name, {
             'event': event,
             'player': player,
-            'questions': event.questions.filter(state=2),
+            'questions': event.questions.filter(state__in=(2, 3,)),
             'my_questions': event.questions.filter(dasher=player),
             'player_submit_question': not event.questions.filter(dasher=player).exists(),
             'word_and_definition_form': WordAndDefinitionForm(),
         })
 
-    # Handles player naming only, all other actions handled via HTMX forms
+    # Handles leaving and player naming only, all other actions handled via
+    # HTMX forms
     def post(self, request, key):
         event = get_object_or_404(Event, key=key)
         if 'leave_game' in request.POST:
@@ -145,27 +143,9 @@ class EventFormsView(View):
     """
 
     def post(self, request, key):
+        template_name = 'event_body.html'
         event = get_object_or_404(Event, key=key)
-        # Name form
-        if 'name' in request.POST:
-            player_form = PlayerForm(request.POST)
-            if not player_form.is_valid():
-                return render(request, self.template_name, {
-                    'event': event,
-                    'player_form': player_form,
-                })
-            # Save the player's info in their session
-            request.session['player_name'] = player_form.cleaned_data['name']
-            request.session['player_alias'] = player_form.cleaned_data['alias']
-            # Find a record for them, or create it.
-            player, created = Player.objects.update_or_create(
-                name=player_form.cleaned_data['name'],
-                alias=player_form.cleaned_data['alias'],
-            )
-            return render(request, 'event_need_player_form.html', {
-                'event': event,
-                'player_form': player_form,
-            })
+        # New player and leaving should be handled by event view
 
         # Otherwise, we assume we have the player set in the session
         player = get_player(request, event, 'event.html')
@@ -198,11 +178,29 @@ class EventFormsView(View):
 
         else:
             print(f"{request.POST=}")
+
+        # Here we add some prefetches to relate to the player, because the
+        # page can't easily look up the querysets by the current player.
+        questions = event.questions.filter(
+            state=2,
+        ).prefetch_related(
+            # A list of the definition submitted by the current player
+            models.Prefetch(
+                'definitions', Definition.objects.filter(player=player),
+                to_attr='my_definition'
+            ),
+            # A list of the definition guessed by the current player
+            models.Prefetch(
+                'definitions', Definition.objects.filter(guesses__player=player),
+                to_attr='my_definition'
+            ),
+        )
+
         return render(request, self.template_name, {
             'event': event,
             'player': player,
-            'questions': event.questions.filter(state=2),
-            'my_questions': event.questions.filter(dasher=player),
+            'questions': questions,
+            'my_questions': event.questions.filter(dasher=player, state=1),
             'player_submit_question': not event.questions.filter(dasher=player).exists(),
             'word_and_definition_form': WordAndDefinitionForm(),
         })
