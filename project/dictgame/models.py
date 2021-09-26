@@ -1,9 +1,11 @@
+from django.contrib.auth.models import User
 from django.db import models
 
 
 class Player(models.Model):
+    # Some users can log in, but most players are just created on spec
+    user = models.ForeignKey(User, default=None, null=True, on_delete=models.SET_NULL)
     name = models.CharField(max_length=64)
-    # password = models.PasswordField()  # Do we need a password?
     alias = models.CharField(max_length=64)
 
     def __str__(self):
@@ -63,8 +65,7 @@ class Definition(models.Model):
 class Guess(models.Model):
     player = models.ForeignKey(Player, on_delete=models.CASCADE)
     chose = models.ForeignKey(Definition, related_name='guesses', on_delete=models.CASCADE)
-    scored = models.BooleanField(default=False)
-    score = models.PositiveSmallIntegerField(default=0)
+    score = models.SmallIntegerField(default=0, null=True)
 
     def calc_score(self):
         """
