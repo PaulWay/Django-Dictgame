@@ -89,4 +89,4 @@ class Guess(models.Model):
         return 0
 
     def __str__(self):
-        return f"{self.id}: {self.player.alias} chose answer {self.chosen_id} in question {self.chosen.question_id}"
+        return f"{self.id}: {self.player.alias} chose definition {self.chose_id} in question {self.chosen.question_id}"
