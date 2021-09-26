@@ -1,5 +1,13 @@
 <div id="questions">
+    <p>Currently available questions:</p>
     <ul>{% for question in questions %}
-    <li>{{ question.word }} ({{ question.get_theme_display }})</li>
+    <li>
+        {{ question.word }} ({{ question.get_theme_display }})
+        {% if question.state == '2' %}- your definition: {{ question.my_definition.0 }}
+        {% elif question.state == '3' %}- your guess: {{ question.my_guess }}
+        {% else %}
+        (State: {{ question.state }}: {{ question.get_state_display }})
+        {% endif %}{# question state #}
+    </li>
     {% endfor %}</ul>
 </div>
