@@ -108,9 +108,25 @@
         "model": "dictgame.definition",
         "pk": 6,
         "fields": {
-            "player": 1,
+            "player": 2,
             "question": 4,
-            "definition": "First lighting of London streets with gas lights"
+            "definition": "Plasticine is first invented, using flour and linseed oil"
+        }
+
+    }, {
+        "model": "dictgame.guess",
+        "pk": 1,
+        "fields": {
+            "player": 2,
+            "chose": 4
+        }
+    }, {
+        "model": "dictgame.guess",
+        "pk": 2,
+        "fields": {
+            "player": 2,
+            "chose": 6,
+            "score": 0
         }
     }
 ]
