@@ -1,0 +1,16 @@
+{# step 1 - use HTMX to request eventforms with form object #}
+{# step 2 - presence of 'guess_form' means we render the form #}
+{# step 3 - presence of 'question.my_guess' means we display the guess #}
+<div id="question_{{question.id}}_guess" >{% if question.my_guess %}
+your guess: {{ question.my_guess.0.definition }}
+{% elif guess_form %}
+<form action="{% url 'eventforms' key=event.key %}" hx-post=">{# replaces entire div #}
+{% csrf_token %}
+{{ guess_form.as_p }}
+<tr><td colspan="2" align="center">
+<input name="guess_form" type="submit" value="I think it's..." />
+{% else %}
+<input type="submit" hx-get="{% url 'eventforms' key=event.key %}?form=guess_form" hx-trigger="load" />
+Let's get some guesses for you to choose
+{% endif %}{# player's guess #}</div>
+<p>We're still waiting for other people to submit their guess</p>

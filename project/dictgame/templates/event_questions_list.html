@@ -3,8 +3,8 @@
     <ul>{% for question in questions %}
     <li>
         {{ question.word }} ({{ question.get_theme_display }})
-        {% if question.state == '2' %}- your definition: {{ question.my_definition.0 }}
-        {% elif question.state == '3' %}- your guess: {{ question.my_guess }}
+        {% if question.state == '2' %}-{% include "question_give_definition.html" %}
+        {% elif question.state == '3' %}-{% include "question_give_guess.html" %}
         {% else %}
         (State: {{ question.state }}: {{ question.get_state_display }})
         {% endif %}{# question state #}
