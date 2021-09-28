@@ -19,7 +19,7 @@ from django.urls import include, path
 
 from rest_framework import routers
 
-from dictgame import views
+from dictgame import views, urls
 
 
 api = routers.DefaultRouter()
@@ -30,10 +30,4 @@ api.register(r'question', views.QuestionViewSet)
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(api.urls)),
-
-    path(r'event/<str:key>', views.EventView.as_view(), name='event'),
-    # The HTMX form handlers
-    path(r'eventforms/<str:key>', views.EventFormsView.as_view(), name='eventforms'),
-    # And last, the entry?
-    path('', views.EntryView.as_view(), name='entry'),
-]
+] + urls.urlpatterns
