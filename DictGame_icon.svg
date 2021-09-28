@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 210 297"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.1 (c68e22c387, 2021-05-23)"
+   sodipodi:docname="DictGame_icon.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="2.7652076"
+     inkscape:cx="275.92865"
+     inkscape:cy="278.82174"
+     inkscape:window-width="1471"
+     inkscape:window-height="991"
+     inkscape:window-x="26"
+     inkscape:window-y="23"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs2">
+    <font
+       horiz-adv-x="1024"
+       id="font4316"
+       inkscape:label="font 1">
+      <font-face
+         units-per-em="1024"
+         id="font-face4318"
+         font-family="SVGFont 1" />
+      <missing-glyph
+         d="M0,0h1000v1024h-1000z"
+         id="missing-glyph4320" />
+    </font>
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <text
+       xml:space="preserve"
+       style="font-size:16.9333px;line-height:1.25;font-family:sans-serif;stroke-width:0.264583"
+       x="43.32795"
+       y="51.081261"
+       id="text2494"><tspan
+         sodipodi:role="line"
+         id="tspan2492"
+         style="stroke-width:0.264583"
+         x="43.32795"
+         y="51.081261" /></text>
+    <text
+       xml:space="preserve"
+       style="font-size:16.9333px;line-height:1.25;font-family:sans-serif;stroke-width:0.264583"
+       x="44.874203"
+       y="61.247578"
+       id="text6128"
+       inkscape:export-filename="/home/paulway/dictgame.png"
+       inkscape:export-xdpi="107.37636"
+       inkscape:export-ydpi="107.37636"><tspan
+         sodipodi:role="line"
+         id="tspan6126"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:sans-serif;-inkscape-font-specification:sans-serif;stroke-width:0.264583"
+         x="44.874203"
+         y="61.247578">D</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:16.9333px;line-height:1.25;font-family:sans-serif;stroke-width:0.265;stroke-miterlimit:4;stroke-dasharray:none"
+       x="49.397087"
+       y="63.70319"
+       id="text13868"
+       inkscape:export-filename="/home/paulway/dictgame.png"
+       inkscape:export-xdpi="107.37636"
+       inkscape:export-ydpi="107.37636"><tspan
+         sodipodi:role="line"
+         id="tspan13866"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:sans-serif;-inkscape-font-specification:'sans-serif Italic';fill:#ff0000;stroke:#ffffff;stroke-width:0.265;stroke-miterlimit:4;stroke-dasharray:none"
+         x="49.397087"
+         y="63.70319">G</tspan></text>
+  </g>
+</svg>
