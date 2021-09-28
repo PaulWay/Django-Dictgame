@@ -40,6 +40,13 @@ class Question(models.Model):
         ('4', 'Scoring done'),
     ])
 
+    def has_answer(self):
+        """
+        A question must always have an answer, which is a definition submitted
+        by the dasher.  That's how we know which answer is correct.
+        """
+        return self.definitions.filter(player=self.dasher).exists()
+
     def __str__(self):
         return f"{self.id}: question in {self.event.name} (theme {self.theme}, state {self.state})"
 
@@ -60,6 +67,11 @@ class Definition(models.Model):
 
     def __str__(self):
         return f"{self.id}: definition for question {self.question_id} by {self.player.alias}"
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['player', 'question'], name='one_definition_per_question')
+        ]
 
 
 class Guess(models.Model):
@@ -90,3 +102,8 @@ class Guess(models.Model):
 
     def __str__(self):
         return f"{self.id}: {self.player.alias} chose definition {self.chose_id} in question {self.chosen.question_id}"
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['player', 'chose'], name='one_guess_per_question')
+        ]
