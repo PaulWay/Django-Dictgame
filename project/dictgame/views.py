@@ -1,3 +1,4 @@
+from django.db.models import Prefetch
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
@@ -6,7 +7,7 @@ from django.views import View
 from rest_framework.viewsets import ModelViewSet
 
 from dictgame.forms import EventForm, PlayerForm, WordAndDefinitionForm
-from dictgame.models import Player, Event, Question
+from dictgame.models import Player, Event, Question, Definition
 from dictgame.serializers import (
     PlayerSerializer, EventSerializer, QuestionSerializer
 )
@@ -81,6 +82,39 @@ def get_player(request, event, template):
     return player
 
 
+def full_page_render(request, event, player, template):
+    questions = event.questions.filter(
+        state=2,
+    ).prefetch_related(
+        # A list of the definition submitted by the current player
+        Prefetch(
+            'definitions', Definition.objects.filter(player=player),
+            to_attr='my_definition'
+        ),
+        # A list of the definition guessed by the current player
+        Prefetch(
+            'definitions', Definition.objects.filter(guesses__player=player),
+            to_attr='my_guess'
+        ),
+    )
+    print([
+        f"q {q}: {q.my_definition=}"
+        for q in questions
+    ], [
+        f"q {q}: {q.my_guess=}"
+        for q in questions
+    ])
+
+    return render(request, template, {
+        'event': event,
+        'player': player,
+        'questions': questions,
+        'my_questions': event.questions.filter(dasher=player),
+        'player_submit_question': not event.questions.filter(dasher=player).exists(),
+        'word_and_definition_form': WordAndDefinitionForm(),
+    })
+
+
 class EventView(View):
     template_name = 'event.html'
     def get(self, request, key):
@@ -88,14 +122,7 @@ class EventView(View):
         player = get_player(request, event, self.template_name)
         if not isinstance(player, Player):
             return player  # it's the render of the form
-        return render(request, self.template_name, {
-            'event': event,
-            'player': player,
-            'questions': event.questions.filter(state__in=(2, 3,)),
-            'my_questions': event.questions.filter(dasher=player),
-            'player_submit_question': not event.questions.filter(dasher=player).exists(),
-            'word_and_definition_form': WordAndDefinitionForm(),
-        })
+        return full_page_render(request, event, player, self.template_name)
 
     # Handles leaving and player naming only, all other actions handled via
     # HTMX forms
@@ -127,14 +154,8 @@ class EventView(View):
             if not isinstance(player, Player):
                 return player  # it's the render of the form
 
-        return render(request, 'event_body.html', {
-            'event': event,
-            'player': player,
-            'questions': event.questions.filter(state=2),
-            'my_questions': event.questions.filter(dasher=player),
-            'player_submit_question': not event.questions.filter(dasher=player).exists(),
-            'word_and_definition_form': WordAndDefinitionForm(),
-        })
+        # This doesn't use HTMX so it's the full page.
+        return full_page_render(request, event, player, self.template_name)
 
 
 class EventFormsView(View):
@@ -142,8 +163,21 @@ class EventFormsView(View):
     Handle HTMX event page form interactions
     """
 
+    def get(self, request, key):
+        """
+        Used to get the initial form object for the template, based on the
+        'form' parameter.  Any choice of what to get is supplied
+        in the query parameters.
+        """
+        if 'form' not in request.GET:
+            print("WARNING: EventForms get with no form parameter")
+            return full_page_render(request, event, player, 'event_body.html')
+        form_name = request.GET['form']
+
+
     def post(self, request, key):
         template_name = 'event_body.html'
+        form = None
         event = get_object_or_404(Event, key=key)
         # New player and leaving should be handled by event view
 
@@ -168,39 +202,9 @@ class EventFormsView(View):
                     player=player, question=q,
                     definition=wnd_form.cleaned_data['definition']
                 )
-            return render(request, 'event_player_submit_word.html', {
-                'event': event, 'player': player,
-                'questions': event.questions.filter(state=2),
-                'my_questions': event.questions.filter(dasher=player),
-                'player_submit_question': not event.questions.filter(dasher=player).exists(),
-                'word_and_definition_form': WordAndDefinitionForm(),
-            })
+            template = 'event_player_submit_word.html'
 
         else:
             print(f"{request.POST=}")
 
-        # Here we add some prefetches to relate to the player, because the
-        # page can't easily look up the querysets by the current player.
-        questions = event.questions.filter(
-            state=2,
-        ).prefetch_related(
-            # A list of the definition submitted by the current player
-            models.Prefetch(
-                'definitions', Definition.objects.filter(player=player),
-                to_attr='my_definition'
-            ),
-            # A list of the definition guessed by the current player
-            models.Prefetch(
-                'definitions', Definition.objects.filter(guesses__player=player),
-                to_attr='my_definition'
-            ),
-        )
-
-        return render(request, self.template_name, {
-            'event': event,
-            'player': player,
-            'questions': questions,
-            'my_questions': event.questions.filter(dasher=player, state=1),
-            'player_submit_question': not event.questions.filter(dasher=player).exists(),
-            'word_and_definition_form': WordAndDefinitionForm(),
-        })
+        return full_page_render(request, event, player, template_name)
